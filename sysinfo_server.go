@@ -14,7 +14,7 @@ func handler(w http.ResponseWriter, r *http.Request) {
 }
 
 func handlerVersion(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "v0.1.0")
+	fmt.Fprintf(w, "v1.1.0")
 }
 
 func handlerDuration(w http.ResponseWriter, r *http.Request) {
