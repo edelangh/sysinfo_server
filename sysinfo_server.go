@@ -29,7 +29,7 @@ func handlerVersion(w http.ResponseWriter, r *http.Request) {
 		d := VersionResp{Version: Version}
 		json.NewEncoder(w).Encode(d)
 	default:
-		fmt.Fprintf(w, "%s", Version)
+		fmt.Fprintf(w, "%s\n", Version)
 	}
 }
 
@@ -63,7 +63,7 @@ func handlerDuration(w http.ResponseWriter, r *http.Request) {
 		d := DurationResp{Duration: match[2]}
 		json.NewEncoder(w).Encode(d)
 	default:
-		fmt.Fprintf(w, "%s", match[2])
+		fmt.Fprintf(w, "%s\n", match[2])
 	}
 }
 
