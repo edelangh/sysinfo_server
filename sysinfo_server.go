@@ -7,14 +7,34 @@ import (
 	"net/http"
 	"os/exec"
 	"regexp"
+	"encoding/json"
 )
 
+const Version = "v1.1.0"
+
 func handler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Start by browsing /version or /duration")
+	fmt.Fprintf(w,`Start by browsing /version or /duration
+Try also with Header "Accept: application/json"
+`)
+}
+
+type VersionResp struct {
+	Version string `json:"version"`
 }
 
 func handlerVersion(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "v1.1.0")
+	accept := r.Header.Get("Accept")
+	switch accept {
+	case "application/json":
+		d := VersionResp{Version: Version}
+		json.NewEncoder(w).Encode(d)
+	default:
+		fmt.Fprintf(w, "%s", Version)
+	}
+}
+
+type DurationResp struct {
+	Duration string `json:"duration"`
 }
 
 func handlerDuration(w http.ResponseWriter, r *http.Request) {
@@ -28,7 +48,7 @@ func handlerDuration(w http.ResponseWriter, r *http.Request) {
 	 * out should look like:
 	 * Startup finished in 2.731s (kernel) + 23.298s (userspace) = 26.030s
 	 */
-	reg, _ := regexp.Compile("[[:digit:].]+")
+	reg, _ := regexp.Compile("[[:digit:].]+[smh]")
 	match := reg.FindAllString(string(out), -1)
 	if (len(match) < 3) {
 		emsg := "Invalid systemd-analyze output"
@@ -36,7 +56,15 @@ func handlerDuration(w http.ResponseWriter, r *http.Request) {
 		/* Fix: http.Error doesn't have time to send the error */
 		log.Fatal(emsg)
 	}
-	fmt.Fprintf(w, "%ss", match[2])
+
+	accept := r.Header.Get("Accept")
+	switch accept {
+	case "application/json":
+		d := DurationResp{Duration: match[2]}
+		json.NewEncoder(w).Encode(d)
+	default:
+		fmt.Fprintf(w, "%s", match[2])
+	}
 }
 
 func main() {
