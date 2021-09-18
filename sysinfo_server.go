@@ -10,7 +10,7 @@ import (
 	"encoding/json"
 )
 
-const Version = "v1.1.0"
+const Version = "v1.2.0"
 
 func handler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w,`Start by browsing /version or /duration
